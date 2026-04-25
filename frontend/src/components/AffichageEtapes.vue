@@ -4,10 +4,10 @@
     <!-- Header -->
     <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
       <div>
-        <p class="text-xs font-semibold tracking-widest uppercase text-indigo-500 dark:text-indigo-400 mb-1">
+        <p class="text-xs font-semibold tracking-widest uppercase text-indigo-500 dark:text-indigo-400 mb-7">
           Résolution complète
         </p>
-        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white ">
           {{ etapes.length }} étapes ·
           <span class="text-indigo-600 dark:text-indigo-400">Coût = {{ final.cout_total.toFixed(2) }}</span>
         </h2>
@@ -17,7 +17,7 @@
           text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400
           hover:border-indigo-300 dark:hover:border-indigo-600 text-xs font-medium transition-all
           bg-white dark:bg-gray-900">
-        ← Nouvelle saisie
+        Nouvelle saisie
       </button>
     </div>
 
