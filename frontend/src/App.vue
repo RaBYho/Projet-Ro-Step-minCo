@@ -97,7 +97,7 @@ async function lancerResolution(donnees) {
   try {
     await new Promise(r => setTimeout(r, 300))
     messageChargement.value = 'Calcul de la solution initiale...'
-    const response = await fetch('http://localhost:8000/resoudre', {
+    const response = await fetch('/api/resoudre', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(donnees)

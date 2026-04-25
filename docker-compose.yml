@@ -1,6 +1,8 @@
 services:
   backend:
     build: ./backend
+    volumes:
+      - ./backend:/app
     environment:
       - PYTHONUNBUFFERED=1
     # Pas besoin d'exposer le port 8000 à l'extérieur, 
@@ -8,6 +10,8 @@ services:
 
   frontend:
     build: ./frontend
+    volumes:
+      - ./frontend:/app
     ports:
       - "80:80"  # Accède maintenant à ton site via http://localhost
     depends_on:
