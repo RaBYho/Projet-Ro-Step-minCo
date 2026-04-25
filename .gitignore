@@ -1,0 +1,36 @@
+# --- Python (Back-end) ---
+# Environnements virtuels
+venv/
+env/
+.env/
+# Fichiers compilés
+__pycache__/
+*.py[cod]
+# Fichiers de configuration sensibles
+.env
+*.pem
+
+# --- Node.js & Vite (Front-end) ---
+# Dépendances (ne jamais inclure)
+node_modules/
+# Dossiers de build (générés par 'npm run build')
+dist/
+dist-ssr/
+.vite/
+# Fichiers de log locaux
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- IDE & Système ---
+# VS Code
+.vscode/
+# JetBrains (PyCharm, WebStorm, etc.)
+.idea/
+# Système macOS
+.DS_Store
+# Système Windows
+Thumbs.db
+
+# --- Logs & Divers ---
+*.log
