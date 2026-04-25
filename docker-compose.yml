@@ -1,0 +1,14 @@
+services:
+  backend:
+    build: ./backend
+    environment:
+      - PYTHONUNBUFFERED=1
+    # Pas besoin d'exposer le port 8000 à l'extérieur, 
+    # Nginx s'en occupera (si tu veux un seul point d'entrée)
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"  # Accède maintenant à ton site via http://localhost
+    depends_on:
+      - backend

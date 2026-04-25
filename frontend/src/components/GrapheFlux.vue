@@ -51,7 +51,7 @@
         text-anchor="middle" dominant-baseline="middle"
         :fill="lienEstEpsilon(lien) ? '#f59e0b' : estDansCycle(lien.i, lien.j) ? '#a78bfa' : '#9ca3af'"
         font-size="9" font-weight="600" class="select-none">
-        {{ lienEstEpsilon(lien) ? 'ε' : lien.flux.toFixed(0) }}
+          {{ valAr(lien)}}
       </text>
 
       <!-- Flèches sur arêtes actives (non-epsilon) -->
@@ -97,13 +97,6 @@
 
       <!-- ── Nœuds destinations (droite) ────────────────────────────────── -->
       <g v-for="(dst, j) in metadata.destinations" :key="`d-${j}`">
-        <!-- Halo pulsant pour nœuds epsilon -->
-        <!-- <circle v-if="dstAEpsilon(j)"
-          :cx="DX" :cy="yDst(j)" r="32"
-          fill="none" stroke="#f59e0b" stroke-width="1.5"
-          opacity="0.4"
-          class="animate-ping-slow"
-        /> -->
         <circle
           :cx="DX" :cy="yDst(j)" r="26"
           :fill="couleurCercleDst(j)"
@@ -125,24 +118,6 @@
           font-size="11" font-weight="700" class="select-none">
           {{ valDst(j) }}
         </text>
-        <!-- Badge ε sur le nœud destination -->
-        <!-- <circle v-if="dstAEpsilon(j)"
-          :cx="DX - 20" :cy="yDst(j) - 20" r="8"
-          fill="#f59e0b" stroke="white" stroke-width="1.5"
-        /> -->
-        <!-- <text v-if="dstAEpsilon(j)"
-          :x="DX - 20" :y="yDst(j) - 20"
-          text-anchor="middle" dominant-baseline="middle"
-          fill="white" font-size="8" font-weight="700" class="select-none">
-          ε
-        </text> -->
-        <!-- Badge v= à droite -->
-        <!-- <text v-if="mode === 'potentiels' && aPotentiels"
-          :x="DX + 38" :y="yDst(j)"
-          text-anchor="middle" dominant-baseline="middle"
-          fill="#5eead4" font-size="8" class="select-none">
-          v={{ valDst(j) }}
-        </text> -->
       </g>
 
     </svg>
@@ -169,10 +144,7 @@
       <span v-if="nbEpsilon > 0" class="flex items-center gap-1.5">
         <span class="inline-block w-5 h-0.5 bg-amber-400 rounded"></span>Arête ε
       </span>
-      <!-- <span v-if="nbEpsilon > 0" class="flex items-center gap-1.5">
-        <span class="w-4 h-4 rounded-full bg-amber-200 dark:bg-amber-800 border-2 border-amber-400 inline-flex items-center justify-center text-[8px] font-bold text-amber-700 dark:text-amber-200">ε</span>
-        Nœud epsilon
-      </span> -->
+      
       <span v-if="hasCycle" class="flex items-center gap-1.5">
         <span class="inline-block w-5 h-0.5 bg-violet-400 rounded"></span>Cycle +
       </span>
@@ -265,6 +237,10 @@ function valDst(j) {
   return String(props.config?.demandes?.[j] ?? '')
 }
 
+function valAr(liens){
+  if(mode.value === 'potentiels') return props.config.couts[liens.i][liens.j] 
+  if(mode.value === 'offre') return String(liens.flux.toFixed(0))
+}
 // ── Couleurs des cercles ──────────────────────────────────────────────────────
 function couleurCercleSrc(i) {
   if (srcActif(i)) return '#6366f1'
@@ -336,7 +312,7 @@ function epaisLien({ i, j, flux }) {
   if (estDansCycle(i, j) || estActive(i, j)) return 2.5
   if (estEpsilonCase(i, j)) return 1.5             // trait fin pour epsilon
   if (flux > 1e-6) return Math.max(1, Math.min(3.5, flux / 35))
-  return 0.7
+  return 0.095
 }
 
 // ── Flèches ───────────────────────────────────────────────────────────────────

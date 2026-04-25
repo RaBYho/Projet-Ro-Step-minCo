@@ -4,10 +4,12 @@
     <!-- Header -->
     <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
       <div>
-        <p class="text-xs font-semibold tracking-widest uppercase text-indigo-500 dark:text-indigo-400 mb-7">
+        <p class="text-xs font-semibold tracking-widest uppercase text-indigo-500 dark:text-indigo-400 mb-12">
           Résolution complète
+          <br>
+          <br>
         </p>
-        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white ">
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
           {{ etapes.length }} étapes ·
           <span class="text-indigo-600 dark:text-indigo-400">Coût = {{ final.cout_total.toFixed(2) }}</span>
         </h2>
@@ -80,7 +82,7 @@
               </div>
               <div>
                 <p class="text-xs text-gray-400 uppercase tracking-wider mb-2">Offres restantes</p>
-                <div class="flex flex-wrap gap-2">
+                <div class="flex flex-wrap gap-2 mt-2">
                   <div v-for="(v, i) in etapeActuelle.offre_restante" :key="i"
                     :class="v <= 0 ? 'opacity-30' : ''"
                     class="bg-stone-50 dark:bg-gray-800 border border-stone-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs">
@@ -91,7 +93,7 @@
               </div>
               <div>
                 <p class="text-xs text-gray-400 uppercase tracking-wider mb-2">Demandes restantes</p>
-                <div class="flex flex-wrap gap-2">
+                <div class="flex flex-wrap gap-2 mt-2">
                   <div v-for="(v, j) in etapeActuelle.demande_restante" :key="j"
                     :class="v <= 0 ? 'opacity-30' : ''"
                     class="bg-stone-50 dark:bg-gray-800 border border-stone-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs">
@@ -125,9 +127,11 @@
                 Solution optimale
               </span>
             </div>
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">Optimisation terminée</h3>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white m-7">Optimisation terminée</h3>
             <p class="text-sm text-gray-500 dark:text-gray-400 mb-5">
               Tous les indices marginaux sont ≥ 0. La solution est optimale.
+              <br>
+              <br>
             </p>
             <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-5 text-center">
               <p class="text-xs text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-1">Coût total minimal</p>
