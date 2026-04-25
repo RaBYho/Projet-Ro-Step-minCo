@@ -43,11 +43,30 @@ def trouver_cycle(flux, start_node):
 
 
 def calculer_couts_marginaux(cost, flux):
+    """
+    Calcule les potentiels u, v avec la convention :
+    la case de BASE avec le COÛT MAXIMAL reçoit u[i] = 0.
+    Puis on propage : u[i] + v[j] = c[i][j] pour toutes les cases de base.
+    """
     lignes, colonnes = flux.shape
     u = [None] * lignes
     v = [None] * colonnes
-    u[0] = 0
-
+ 
+    # ── Trouver la case de base avec le coût maximal ──────────────────────
+    max_cout   = -np.inf
+    pivot_i    = 0
+    pivot_j    = 0
+    for i in range(lignes):
+        for j in range(colonnes):
+            if flux[i, j] > 1e-12 and cost[i, j] > max_cout:
+                max_cout = cost[i, j]
+                pivot_i, pivot_j = i, j
+ 
+    # Cette case a u[pivot_i] = 0, donc v[pivot_j] = cost[pivot_i][pivot_j]
+    u[pivot_i] = 0.0
+    v[pivot_j] = float(cost[pivot_i, pivot_j])
+ 
+    # ── Propagation ───────────────────────────────────────────────────────
     changed = True
     while (None in u or None in v) and changed:
         changed = False
@@ -60,15 +79,17 @@ def calculer_couts_marginaux(cost, flux):
                     elif v[j] is not None and u[i] is None:
                         u[i] = float(cost[i, j]) - v[j]
                         changed = True
-
+ 
+    # ── Indices marginaux pour les cases vides ────────────────────────────
     indices = np.zeros((lignes, colonnes))
     for i in range(lignes):
         for j in range(colonnes):
             if flux[i, j] <= 1e-12:
                 if u[i] is not None and v[j] is not None:
                     indices[i, j] = cost[i, j] - (u[i] + v[j])
-
+ 
     return indices, u, v
+ 
 
 
 def calculer_details_indices(cost, flux, u, v, theta_preview=None):
@@ -100,7 +121,7 @@ def calculer_details_indices(cost, flux, u, v, theta_preview=None):
                         ]
                         valeurs_moins = [float(flux[r, c]) for r, c in cases_moins]
                         theta  = float(min(valeurs_moins))
-                        gain   = abs(indice) * theta
+                        gain   = indice * theta
 
                 details.append({
                     "i":         int(i),
@@ -112,11 +133,11 @@ def calculer_details_indices(cost, flux, u, v, theta_preview=None):
                     "theta":     float(theta),
                     "gain":      float(gain),
                     "formule":   f"{cij:.0f} - ({ui:.0f} + {vj:.0f})",
-                    "formule_gain": f"|{indice:.2f}| × {theta:.2f}" if gain > 0 else "—"
+                    "formule_gain": f"{indice:.2f} × {theta:.2f}" if gain < -1e-9 else "—"
                 })
 
     # Trier par gain décroissant (meilleur gain en tête), puis par indice croissant
-    details.sort(key=lambda x: (-x["gain"], x["indice"]))
+    details.sort(key=lambda x: (x["gain"], x["indice"]))
     return details
 
 

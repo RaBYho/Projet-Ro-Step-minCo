@@ -159,7 +159,7 @@
 
             <!-- Theta -->
             <span class="col-span-2 text-xs font-mono text-right"
-              :class="d.gain > 0 ? 'text-gray-600 dark:text-gray-300' : 'text-gray-300 dark:text-gray-600'">
+              :class="d.gain < -1e-9 ? 'text-gray-600 dark:text-gray-300' : 'text-gray-300 dark:text-gray-600'">
               {{ d.theta > 0 ? d.theta.toFixed(1) : '—' }}
             </span>
 
@@ -167,9 +167,9 @@
             <span class="col-span-2 text-sm font-bold font-mono text-right"
               :class="d.est_meilleur
                 ? 'text-violet-600 dark:text-violet-300'
-                : d.gain > 0 ? 'text-amber-600 dark:text-amber-400'
+                : d.gain < -1e-9 ? 'text-amber-600 dark:text-amber-400'
                 : 'text-gray-300 dark:text-gray-600'">
-              {{ d.gain > 0 ? d.gain.toFixed(2) : '—' }}
+              {{ d.gain < -1e-9 ? d.gain.toFixed(2) : '—' }}
             </span>
           </div>
 
@@ -177,11 +177,11 @@
           <div class="flex flex-wrap gap-3 pt-2 text-xs text-gray-400">
             <span class="flex items-center gap-1.5">
               <span class="w-3 h-3 rounded bg-violet-200 dark:bg-violet-800 inline-block"></span>
-              Pivot (gain max)
+              Pivot (gain minimale)
             </span>
             <span class="flex items-center gap-1.5">
               <span class="w-3 h-3 rounded bg-amber-100 dark:bg-amber-900/40 border border-amber-200 inline-block"></span>
-              Gain positif
+              Gain negatif (amélioration possible)
             </span>
             <span class="flex items-center gap-1.5">
               <span class="w-3 h-3 rounded bg-stone-100 dark:bg-gray-800 border border-stone-200 inline-block"></span>
@@ -262,10 +262,10 @@
           </span>
           <span class="text-gray-400 mx-1">→</span>
           <span class="text-gray-500 dark:text-gray-400">
-            Gain = |{{ etape.meilleur_indice.valeur?.toFixed(2) }}| × {{ etape.theta?.toFixed(2) }}
+            Gain = {{ etape.meilleur_indice.valeur?.toFixed(2) }} × {{ etape.theta?.toFixed(2) }}
           </span>
           <span class="text-gray-400">=</span>
-          <span class="font-bold text-emerald-600 dark:text-emerald-300">
+          <span class="font-bold text-violet-600 dark:text-violet-300">
             {{ etape.meilleur_indice.gain?.toFixed(2) }}
           </span>
         </p>

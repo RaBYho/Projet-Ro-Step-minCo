@@ -54,7 +54,7 @@
           {{ valAr(lien)}}
       </text>
 
-      <!-- Flèches sur arêtes actives (non-epsilon) -->
+      <!-- Flèches sur arêtes actives ET epsilon -->
       <polygon
         v-for="lien in liensActifsReels" :key="`a-${lien.i}-${lien.j}`"
         :points="arrowPoints(ySrc(lien.i), yDst(lien.j))"
@@ -237,9 +237,18 @@ function valDst(j) {
   return String(props.config?.demandes?.[j] ?? '')
 }
 
-function valAr(liens){
-  if(mode.value === 'potentiels') return props.config.couts[liens.i][liens.j] 
-  if(mode.value === 'offre') return String(liens.flux.toFixed(0))
+function valAr(lien) {
+  const cij = props.config?.couts?.[lien.i]?.[lien.j]
+  // Mode potentiels : afficher c_ij sur toutes les arêtes visibles (y compris ε)
+  if (mode.value === 'potentiels') {
+    return cij !== undefined ? String(cij) : '—'
+  }
+  // Mode offre/demande :
+  //   - arête epsilon → afficher 'ε' (flux symbolique)
+  if (estEpsilonCase(lien.i, lien.j)) return 'ε'
+  //   - arête active  → afficher le flux réel
+  if (lien.flux < 1e-6) return '—'
+  return Number.isInteger(lien.flux) ? String(lien.flux) : lien.flux.toFixed(1)
 }
 // ── Couleurs des cercles ──────────────────────────────────────────────────────
 function couleurCercleSrc(i) {
@@ -272,20 +281,20 @@ const liens = computed(() => {
   return res
 })
 
-// Liens visibles dans le label : flux réel > 0 OU epsilon
+// Liens visibles : flux réel > 1e-6 OU arête epsilon (flux ≈ 1e-10)
 const liensVisibles = computed(() =>
-  liens.value.filter(l => l.flux > 1e-6)   // epsilon a flux > 1e-12, donc inclus
+  liens.value.filter(l => l.flux > 1e-6 || estEpsilonCase(l.i, l.j))
 )
-// Liens actifs réels (pour les flèches) : flux > 0 mais PAS epsilon
+// Liens avec flèches : flux actif réel OU epsilon (traités comme actifs)
 const liensActifsReels = computed(() =>
-  liens.value.filter(l => l.flux > 1e-6 && !estEpsilonCase(l.i, l.j))
+  liens.value.filter(l => l.flux > 1e-6 || estEpsilonCase(l.i, l.j))
 )
 
 const hasCycle = computed(() => Array.isArray(props.cycle) && props.cycle.length > 0)
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function lienEstEpsilon(lien)  { return estEpsilonCase(lien.i, lien.j) }
-function lienEstInactif(lien)  { return lien.flux <= 1e-6 }
+function lienEstInactif(lien)  { return lien.flux <= 1e-6 && !estEpsilonCase(lien.i, lien.j) }
 
 function estDansCycle(i, j) { return props.cycle?.some(([r, c]) => r === i && c === j) ?? false }
 function posCycle(i, j)     { return props.cycle?.findIndex(([r, c]) => r === i && c === j) ?? -1 }
@@ -310,7 +319,7 @@ function strokeLien({ i, j, flux }) {
 }
 function epaisLien({ i, j, flux }) {
   if (estDansCycle(i, j) || estActive(i, j)) return 2.5
-  if (estEpsilonCase(i, j)) return 1.5             // trait fin pour epsilon
+  if (estEpsilonCase(i, j)) return 2.0   // même style que arête active
   if (flux > 1e-6) return Math.max(1, Math.min(3.5, flux / 35))
   return 0.095
 }

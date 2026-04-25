@@ -81,8 +81,8 @@ def resoudre_complet(data: DonneesTransport):
         details_indices = calculer_details_indices(cost, flux, u, v)
 
         # Sélection par GAIN MAXIMAL = |Δ| × θ
-        candidats = [d for d in details_indices if d["gain"] > 1e-9]
-
+        # candidats = [d for d in details_indices if d["gain"] > 1e-9]
+        candidats = [d for d in details_indices if d["gain"] < -1e-9]
         # ── Cas optimal ───────────────────────────────────────────────────────
         if not candidats:
             historique_opti.append({
@@ -125,7 +125,7 @@ def resoudre_complet(data: DonneesTransport):
         valeurs_moins = [float(flux[r, c]) for r, c in cases_moins]
         theta         = float(min(valeurs_moins))
         case_sortante = cases_moins[valeurs_moins.index(theta)]
-        gain_reel     = abs(float(indices[i_start, j_start])) * theta
+        gain_reel     = float(indices[i_start, j_start]) * theta
 
         flux_avant   = flux.copy().tolist()
         cout_avant   = cout_courant
@@ -168,7 +168,7 @@ def resoudre_complet(data: DonneesTransport):
                 "formule":      meilleur["formule"],
                 "theta":        theta,
                 "gain":         gain_reel,
-                "formule_gain": f"|{indices[i_start,j_start]:.2f}| × {theta:.2f} = {gain_reel:.2f}"
+                "formule_gain": f"{indices[i_start,j_start]:.2f} × {theta:.2f} = {gain_reel:.2f}"
             },
 
             "cycle":         cycle_natif,
