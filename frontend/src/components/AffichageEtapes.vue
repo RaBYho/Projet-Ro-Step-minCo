@@ -184,13 +184,13 @@
             class="flex items-center gap-1.5 px-4 py-2 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200
               dark:border-indigo-700 text-indigo-600 dark:text-indigo-400 rounded-xl text-xs font-medium
               hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-all">
-            ▶ Lecture auto
+            Lecture auto
           </button>
           <button v-else @click="arreterLecture"
             class="flex items-center gap-1.5 px-4 py-2 bg-red-50 dark:bg-red-900/30 border border-red-200
               dark:border-red-700 text-red-500 dark:text-red-400 rounded-xl text-xs font-medium
               hover:bg-red-100 dark:hover:bg-red-900/50 transition-all">
-            ■ Stop
+            Stop
           </button>
           <span class="text-xs font-mono text-gray-400 dark:text-gray-500">
             <strong class="text-gray-700 dark:text-gray-200">{{ etapeIndex + 1 }}</strong> / {{ etapes.length + 1 }}
