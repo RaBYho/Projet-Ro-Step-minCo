@@ -85,7 +85,7 @@
             </span>
           </div>
           <p class="text-xs text-gray-400 italic">
-            u<sub>i</sub> + v<sub>j</sub> = c<sub>ij</sub> pour chaque case de base
+            v<sub>j</sub> = u<sub>i</sub> + c<sub>ij</sub> pour chaque case de base
           </p>
         </div>
       </Transition>
@@ -105,7 +105,7 @@
       </button>
       <!-- Formules rappel -->
       <div class="flex flex-wrap gap-3 text-xs text-gray-400 mb-3">
-        <span>ρ<sub>ij</sub> = c<sub>ij</sub> − (u<sub>i</sub> + v<sub>j</sub>)</span>
+        <span>ρ<sub>ij</sub> = u<sub>i</sub> + c<sub>ij</sub> − v<sub>j</sub></span>
         <span class="text-gray-300 dark:text-gray-600">·</span>
         <span class="text-violet-500 dark:text-violet-400 font-semibold">
           Gain = ρ<sub>ij</sub> × θ → pivot sur le gain maximal
