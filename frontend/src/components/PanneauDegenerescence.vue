@@ -1,108 +1,258 @@
 <template>
   <div class="space-y-4">
-
     <!-- Alerte principale -->
-    <div class="bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-400 dark:border-amber-600 rounded-2xl p-5 shadow-md">
+    <div
+      class="rounded-2xl p-4 shadow-sm border-2"
+      :class="
+        isDark
+          ? 'bg-amber-900/20 border-amber-700'
+          : 'bg-amber-50 border-amber-300'
+      "
+    >
       <div class="flex items-start gap-3">
-        <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/60 border border-amber-300
-          dark:border-amber-700 flex items-center justify-center shrink-0 mt-0.5">
-          <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        <div
+          class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+          :class="isDark ? 'bg-amber-900/60' : 'bg-amber-100'"
+        >
+          <svg
+            class="w-4.5 h-4.5 shrink-0"
+            :class="isDark ? 'text-amber-400' : 'text-amber-600'"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
           </svg>
         </div>
-        <div class="flex-1">
-          <h3 class="text-base font-bold text-amber-800 dark:text-amber-200 mb-1">Cas dégénéré détecté</h3>
-          <p class="text-sm text-amber-700 dark:text-amber-300">{{ etape.message }}</p>
+        <div class="flex-1 min-w-0">
+          <h3
+            class="text-sm font-bold mb-1"
+            :class="isDark ? 'text-amber-200' : 'text-amber-800'"
+          >
+            Cas dégénéré détecté
+          </h3>
+          <p
+            class="text-xs leading-relaxed"
+            :class="isDark ? 'text-amber-300' : 'text-amber-700'"
+          >
+            {{ etape.message }}
+          </p>
         </div>
       </div>
     </div>
 
     <!-- Explication théorique + comptage -->
-    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-stone-200 dark:border-gray-800 p-5 shadow-sm">
-      <h4 class="text-xs font-semibold tracking-widest uppercase text-gray-400 dark:text-gray-500 mb-3">
-        Pourquoi ce cas se produit-il ?
+    <div
+      class="rounded-2xl border p-4 shadow-sm"
+      :class="
+        isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-stone-200'
+      "
+    >
+      <h4
+        class="text-[11px] font-semibold tracking-widest uppercase mb-2.5"
+        :class="isDark ? 'text-gray-500' : 'text-gray-400'"
+      >
+        Pourquoi ce cas se produit
       </h4>
-      <div class="space-y-2 text-sm text-gray-600 dark:text-gray-300 mb-4">
-        <p>
-          Un problème <strong>m × n</strong> requiert exactement <strong>m + n − 1</strong> cases de base
-          pour que les potentiels u<sub>i</sub>, v<sub>j</sub> soient calculables.
-          La dégénérescence survient quand une ligne et une colonne s'épuisent
-          <em>simultanément</em>, réduisant le nombre de cases actives en dessous du seuil.
-        </p>
-      </div>
-      <div class="grid grid-cols-3 gap-3">
-        <div class="bg-stone-50 dark:bg-gray-800 rounded-xl p-3 text-center border border-stone-200 dark:border-gray-700">
-          <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Cases remplies</p>
-          <p class="text-2xl font-bold font-mono text-red-500 dark:text-red-400">{{ casesRemplies }}</p>
+      <p
+        class="text-xs leading-relaxed mb-4"
+        :class="isDark ? 'text-gray-300' : 'text-gray-600'"
+      >
+        Un problème <strong>m × n</strong> requiert exactement
+        <strong>m + n − 1</strong> cases de base pour calculer les potentiels
+        u<sub>i</sub>, v<sub>j</sub>. La dégénérescence survient quand une ligne
+        et une colonne s'épuisent <em>simultanément</em>, faisant tomber le
+        nombre de cases actives sous ce seuil.
+      </p>
+      <div class="grid grid-cols-3 gap-2">
+        <div
+          class="rounded-xl p-2.5 text-center"
+          :class="isDark ? 'bg-gray-800' : 'bg-stone-50'"
+        >
+          <p
+            class="text-[9px] uppercase tracking-wider mb-1"
+            :class="isDark ? 'text-gray-400' : 'text-gray-400'"
+          >
+            Remplies
+          </p>
+          <p
+            class="text-lg font-bold font-mono tabular-nums"
+            :class="isDark ? 'text-red-400' : 'text-red-500'"
+          >
+            {{ casesRemplies }}
+          </p>
         </div>
-        <div class="bg-stone-50 dark:bg-gray-800 rounded-xl p-3 text-center border border-stone-200 dark:border-gray-700">
-          <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Requises (m+n−1)</p>
-          <p class="text-2xl font-bold font-mono text-gray-700 dark:text-gray-200">{{ casesRequises }}</p>
+        <div
+          class="rounded-xl p-2.5 text-center"
+          :class="isDark ? 'bg-gray-800' : 'bg-stone-50'"
+        >
+          <p
+            class="text-[9px] uppercase tracking-wider mb-1"
+            :class="isDark ? 'text-gray-400' : 'text-gray-400'"
+          >
+            Requises
+          </p>
+          <p
+            class="text-lg font-bold font-mono tabular-nums"
+            :class="isDark ? 'text-gray-200' : 'text-gray-700'"
+          >
+            {{ casesRequises }}
+          </p>
         </div>
-        <div class="bg-amber-50 dark:bg-amber-900/30 rounded-xl p-3 text-center border border-amber-200 dark:border-amber-700">
-          <p class="text-[10px] text-amber-600 uppercase tracking-wider mb-1">ε ajoutés</p>
-          <p class="text-2xl font-bold font-mono text-amber-600 dark:text-amber-300">
+        <div
+          class="rounded-xl p-2.5 text-center"
+          :class="isDark ? 'bg-amber-900/30' : 'bg-amber-50'"
+        >
+          <p
+            class="text-[9px] uppercase tracking-wider mb-1"
+            :class="isDark ? 'text-amber-600' : 'text-amber-600'"
+          >
+            ajoutés
+          </p>
+          <p
+            class="text-lg font-bold font-mono tabular-nums"
+            :class="isDark ? 'text-amber-300' : 'text-amber-600'"
+          >
             {{ etape.cases_epsilon?.length ?? 0 }}
           </p>
         </div>
       </div>
     </div>
 
-    <!-- Nœuds epsilon avec indication "visibles dans la matrice et le graphe" -->
-    <!-- <div class="bg-white dark:bg-gray-900 rounded-2xl border-2 border-dashed border-amber-300 dark:border-amber-700 p-5 shadow-sm">
-      <h4 class="text-xs font-semibold tracking-widest uppercase text-amber-600 dark:text-amber-400 mb-3 flex items-center gap-2">
-        <span class="w-2.5 h-2.5 rounded-sm bg-amber-400 animate-pulse inline-block"></span>
-        Nœuds epsilon ε insérés dans la base
+    <!-- Nœuds epsilon -->
+    <div
+      class="rounded-2xl border p-4 shadow-sm"
+      :class="
+        isDark
+          ? 'bg-gray-900 border-gray-700'
+          : 'bg-white border-amber-300 border-dashed'
+      "
+    >
+      <h4
+        class="text-[11px] font-semibold tracking-widest uppercase mb-3 flex items-center gap-2"
+        :class="isDark ? 'text-amber-400' : 'text-amber-600'"
+      >
+        <span
+          class="w-2 h-2 rounded-sm inline-block animate-pulse bg-amber-400"
+        ></span>
+        Nœuds ε insérés
       </h4>
 
-      <div class="flex flex-wrap gap-3 mb-4">
-        <div v-for="([i, j]) in etape.cases_epsilon" :key="`eps-${i}-${j}`"
-          class="flex items-center gap-2 bg-amber-50 dark:bg-amber-900/30 border-2 border-amber-400
-            dark:border-amber-500 rounded-xl px-4 py-2.5 shadow-sm">
-          <span class="text-xl font-bold text-amber-500 dark:text-amber-300 leading-none font-mono">ε</span>
+      <div class="flex flex-wrap gap-2 mb-3">
+        <div
+          v-for="[i, j] in etape.cases_epsilon"
+          :key="`eps-${i}-${j}`"
+          class="flex items-center gap-2 rounded-xl px-3 py-2"
+          :class="isDark ? 'bg-amber-900/30' : 'bg-amber-50'"
+        >
+          <span
+            class="text-base font-bold leading-none font-mono"
+            :class="isDark ? 'text-amber-300' : 'text-amber-500'"
+          >
+            ε
+          </span>
           <div>
-            <p class="text-sm font-bold font-mono text-amber-700 dark:text-amber-200">[U{{ i+1 }}, C{{ j+1 }}]</p>
-            <p class="text-[10px] text-amber-500 dark:text-amber-400">flux ≈ 0 (fictif)</p>
+            <p
+              class="text-xs font-bold font-mono"
+              :class="isDark ? 'text-amber-200' : 'text-amber-700'"
+            >
+              U{{ i + 1 }} → C{{ j + 1 }}
+            </p>
+            <p
+              class="text-[9px]"
+              :class="isDark ? 'text-amber-400' : 'text-amber-500'"
+            >
+              flux ≈ 0
+            </p>
           </div>
         </div>
       </div>
 
-      <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-3 space-y-1.5">
-        <p class="text-xs text-amber-700 dark:text-amber-300">
-          <strong>Dans la matrice →</strong> ces cases sont surlignées en jaune avec le badge <strong>ε</strong>.
+      <div
+        class="rounded-xl p-3 space-y-1.5"
+        :class="isDark ? 'bg-amber-900/20' : 'bg-amber-50'"
+      >
+        <p
+          class="text-[11px] leading-relaxed"
+          :class="isDark ? 'text-amber-300' : 'text-amber-700'"
+        >
+          <strong>Matrice →</strong> surlignées en jaune avec le badge
+          <strong>ε</strong>.
         </p>
-        <p class="text-xs text-amber-700 dark:text-amber-300">
-          <strong>Dans le graphe →</strong> les nœuds sources et destinations concernés apparaissent en <strong>jaune</strong>.
+        <p
+          class="text-[11px] leading-relaxed"
+          :class="isDark ? 'text-amber-300' : 'text-amber-700'"
+        >
+          <strong>Graphe →</strong> nœuds sources/destinations concernés en
+          jaune.
         </p>
-        <p class="text-xs text-amber-700 dark:text-amber-300">
-          <strong>Élimination →</strong> au fur des itérations, les ε sont traités comme des flux réels.
-          Quand leur flux descend à 0 lors d'un pivot, ils disparaissent naturellement de la base.
+        <p
+          class="text-[11px] leading-relaxed"
+          :class="isDark ? 'text-amber-300' : 'text-amber-700'"
+        >
+          <strong>Élimination →</strong> traités comme flux réels ;
+          disparaissent quand leur flux atteint 0 lors d'un pivot.
         </p>
       </div>
-    </div> -->
+    </div>
 
-    <!-- Rappel : la matrice est affichée à droite -->
-    <!-- <div class="flex items-center gap-2 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200
-      dark:border-indigo-800 rounded-xl px-4 py-3 text-xs text-indigo-600 dark:text-indigo-400">
-      <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M9 5l7 7-7 7"/>
+    <!-- Rappel navigation -->
+    <div
+      class="flex items-center gap-2 rounded-xl px-3 py-2.5 text-[11px]"
+      :class="
+        isDark
+          ? 'bg-indigo-900/20 text-indigo-400'
+          : 'bg-indigo-50 text-indigo-600'
+      "
+    >
+      <svg
+        class="w-3.5 h-3.5 shrink-0"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 5l7 7-7 7"
+        />
       </svg>
-      Consultez la <strong class="mx-1">Matrice</strong> et le <strong class="mx-1">Graphe</strong>
-      à droite — les nœuds ε sont surlignés en jaune.
-    </div> -->
-
+      Voir <strong class="mx-0.5">Matrice</strong> et
+      <strong class="mx-0.5">Graphe</strong> à droite — nœuds ε en jaune.
+    </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
-const props = defineProps({ etape: Object, config: Object })
+import { computed } from "vue";
+const props = defineProps({ etape: Object, config: Object, isDark: Boolean });
 
 const casesRequises = computed(() => {
-  if (!props.etape.flux) return '?'
-  return props.etape.flux.length + (props.etape.flux[0]?.length ?? 0) - 1
-})
-const casesRemplies = computed(() => casesRequises.value - (props.etape.cases_epsilon?.length ?? 0))
+  if (!props.etape.flux) return "?";
+  return props.etape.flux.length + (props.etape.flux[0]?.length ?? 0) - 1;
+});
+
+// Compte réel des cases non-nulles dans le flux (hors epsilon), au lieu de
+// la déduire arithmétiquement de casesRequises — sinon l'affichage reste
+// toujours cohérent avec lui-même mais jamais avec la vraie matrice.
+const epsSet = computed(
+  () => new Set((props.etape.cases_epsilon ?? []).map(([i, j]) => `${i}-${j}`)),
+);
+const casesRemplies = computed(() => {
+  if (!props.etape.flux) return "?";
+  let count = 0;
+  for (let i = 0; i < props.etape.flux.length; i++) {
+    for (let j = 0; j < props.etape.flux[i].length; j++) {
+      const isEps = epsSet.value.has(`${i}-${j}`);
+      if (!isEps && (props.etape.flux[i][j] ?? 0) > 1e-6) count++;
+    }
+  }
+  return count;
+});
 </script>

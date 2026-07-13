@@ -3,17 +3,14 @@ from collections import deque
 
 
 def trouver_cycle(flux, start_node):
-    """
-    Trouve le cycle MINIMAL de Stepping Stone (BFS → plus court en premier).
-    """
     lignes, colonnes = flux.shape
     base = set(
         (r, c)
         for r in range(lignes)
         for c in range(colonnes)
         if flux[r, c] > 1e-12
-    )
-    base.add(start_node)
+    )#
+    base.add(start_node)#
 
     def voisins(node, axis, path_set):
         return [
@@ -21,9 +18,9 @@ def trouver_cycle(flux, start_node):
             if n != node
             and n[axis] == node[axis]
             and (n not in path_set or n == start_node)
-        ]
+        ]#
 
-    file = deque([([start_node], 0)])
+    file = deque([([start_node], 0)])#
     while file:
         path, axis = file.popleft()
         current    = path[-1]
@@ -43,11 +40,7 @@ def trouver_cycle(flux, start_node):
 
 
 def calculer_couts_marginaux(cost, flux):
-    """
-    Calcule les potentiels u, v avec la convention :
-    la case de BASE avec le COÛT MAXIMAL reçoit u[i] = 0.
-    Puis on propage : u[i] + v[j] = c[i][j] pour toutes les cases de base.
-    """
+    
     lignes, colonnes = flux.shape
     u = [None] * lignes
     v = [None] * colonnes
@@ -116,7 +109,7 @@ def calculer_details_indices(cost, flux, u, v):
                     cycle = trouver_cycle(flux, (i, j))
                     if cycle and len(cycle) >= 4:
                         cases_moins = [
-                            (r, c) for idx, (r, c) in enumerate(cycle) if idx % 2 == 1
+                            (r, c) for idx, (r, c) in enumerate(cycle) if idx % 2 == 1#
                         ]
                         theta = float(min(flux[r, c] for r, c in cases_moins))
                         gain  = indice * theta   # négatif : Δ × θ
@@ -139,7 +132,7 @@ def calculer_details_indices(cost, flux, u, v):
                 })
 
     # Meilleur pivot = gain maximal
-    details.sort(key=lambda x: (x["gain"], x["indice"]))  # plus négatif en tête
+    details.sort(key=lambda x: (x["gain"], x["indice"]))  # plus négatif en tête#
     return details
 
 

@@ -1,191 +1,328 @@
 <template>
   <div class="space-y-4">
-
     <!-- ── En-tête : coût avant / après / réduction ─────────────────────── -->
-    <div :class="etape.optimal
-        ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800'
-        : 'bg-white dark:bg-gray-900 border-stone-200 dark:border-gray-800'"
-      class="rounded-2xl border p-5 shadow-sm">
-
-      <div class="flex items-center gap-3 mb-3">
-        <span class="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full"
-          :class="etape.optimal
-            ? 'bg-emerald-100 dark:bg-emerald-800/60 text-emerald-700 dark:text-emerald-300'
-            : 'bg-violet-100 dark:bg-violet-900/50 text-violet-700 dark:text-violet-300'">
+    <div
+      :class="
+        etape.optimal
+          ? isDark
+            ? 'bg-emerald-900/20 border-emerald-800'
+            : 'bg-emerald-50 border-emerald-200'
+          : isDark
+            ? 'bg-gray-900 border-gray-800'
+            : 'bg-white border-stone-200'
+      "
+      class="rounded-2xl border p-4 shadow-sm"
+    >
+      <div class="flex items-center gap-2 mb-3 flex-wrap">
+        <span
+          class="text-[11px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full"
+          :class="
+            etape.optimal
+              ? isDark
+                ? 'bg-emerald-800/60 text-emerald-300'
+                : 'bg-emerald-100 text-emerald-700'
+              : isDark
+                ? 'bg-violet-900/50 text-violet-300'
+                : 'bg-violet-100 text-violet-700'
+          "
+        >
           Itération {{ etape.iteration }}
         </span>
-        <span v-if="etape.optimal" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-          ✓ Solution optimale — tous les gains ≤ 0
+        <span
+          v-if="etape.optimal"
+          class="text-xs font-semibold"
+          :class="isDark ? 'text-emerald-400' : 'text-emerald-600'"
+        >
+          ✓ Solution optimale
         </span>
       </div>
 
-      <!-- Coût avant → après avec réduction -->
-      <div v-if="!etape.optimal" class="flex items-center gap-4 flex-wrap">
-        <div>
-          <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Coût avant</p>
-          <p class="text-2xl font-bold font-mono text-gray-700 dark:text-gray-200">
-            {{ etape.cout_avant?.toFixed(2) }}
-          </p>
+      <!-- Coût avant → après → réduction, empilé verticalement pour tenir dans une colonne étroite -->
+      <div v-if="!etape.optimal" class="space-y-2.5">
+        <div class="flex items-center gap-3">
+          <div class="flex-1">
+            <p
+              class="text-[10px] uppercase tracking-wider mb-0.5"
+              :class="isDark ? 'text-gray-500' : 'text-gray-400'"
+            >
+              Avant
+            </p>
+            <p
+              class="text-lg font-bold font-mono tabular-nums"
+              :class="isDark ? 'text-gray-200' : 'text-gray-700'"
+            >
+              {{ etape.cout_avant?.toFixed(2) }}
+            </p>
+          </div>
+          <svg
+            class="w-4 h-4 shrink-0"
+            :class="isDark ? 'text-gray-600' : 'text-gray-300'"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+          <div class="flex-1">
+            <p
+              class="text-[10px] uppercase tracking-wider mb-0.5"
+              :class="isDark ? 'text-gray-500' : 'text-gray-400'"
+            >
+              Après
+            </p>
+            <p
+              class="text-lg font-bold font-mono tabular-nums"
+              :class="isDark ? 'text-indigo-400' : 'text-indigo-600'"
+            >
+              {{ etape.cout_apres?.toFixed(2) }}
+            </p>
+          </div>
         </div>
-        <svg class="w-5 h-5 text-gray-300 dark:text-gray-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-        </svg>
-        <div>
-          <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Coût après</p>
-          <p class="text-2xl font-bold font-mono text-indigo-600 dark:text-indigo-400">
-            {{ etape.cout_apres?.toFixed(2) }}
-          </p>
-        </div>
-        <div class="ml-auto text-right bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200
-          dark:border-emerald-700 rounded-xl px-4 py-2">
-          <p class="text-[10px] text-emerald-500 uppercase tracking-wider mb-0.5">Réduction</p>
-          <p class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-300">
+        <div
+          class="rounded-xl px-3 py-2 flex items-center justify-between"
+          :class="isDark ? 'bg-emerald-900/30' : 'bg-emerald-50'"
+        >
+          <span
+            class="text-[10px] uppercase tracking-wider"
+            :class="isDark ? 'text-emerald-500' : 'text-emerald-600'"
+          >
+            Réduction
+          </span>
+          <span
+            class="text-base font-bold font-mono tabular-nums"
+            :class="isDark ? 'text-emerald-300' : 'text-emerald-600'"
+          >
             −{{ etape.reduction_cout?.toFixed(2) }}
-          </p>
+          </span>
         </div>
       </div>
 
       <!-- Cas optimal -->
       <div v-else>
-        <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Coût total minimal</p>
-        <p class="text-3xl font-bold font-mono text-emerald-600 dark:text-emerald-300">
+        <p
+          class="text-[10px] uppercase tracking-wider mb-1"
+          :class="isDark ? 'text-gray-500' : 'text-gray-400'"
+        >
+          Coût total minimal
+        </p>
+        <p
+          class="text-2xl font-bold font-mono tabular-nums"
+          :class="isDark ? 'text-emerald-300' : 'text-emerald-600'"
+        >
           {{ etape.cout_apres?.toFixed(2) }}
         </p>
       </div>
     </div>
 
     <!-- ── Potentiels u, v ────────────────────────────────────────────────── -->
-    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-stone-200 dark:border-gray-800 p-5 shadow-sm">
-      <button @click="showPotentiels = !showPotentiels"
-        class="w-full flex items-center justify-between text-left">
-        <h4 class="text-xs font-semibold tracking-widest uppercase text-gray-400 dark:text-gray-500">
+    <div
+      class="rounded-2xl border p-4 shadow-sm"
+      :class="
+        isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-stone-200'
+      "
+    >
+      <button
+        @click="showPotentiels = !showPotentiels"
+        class="w-full flex items-center justify-between text-left"
+      >
+        <h4
+          class="text-[11px] font-semibold tracking-widest uppercase"
+          :class="isDark ? 'text-gray-500' : 'text-gray-400'"
+        >
           Potentiels u, v
         </h4>
-        <svg class="w-4 h-4 text-gray-400 transition-transform" :class="showPotentiels ? 'rotate-180':''"
-          fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        <svg
+          class="w-3.5 h-3.5 transition-transform shrink-0"
+          :class="[
+            isDark ? 'text-gray-400' : 'text-gray-400',
+            showPotentiels ? 'rotate-180' : '',
+          ]"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 9l-7 7-7-7"
+          />
         </svg>
       </button>
       <Transition name="collapse">
         <div v-if="showPotentiels" class="mt-3 space-y-2">
-          <div class="flex flex-wrap gap-2">
-            <span v-for="(val, i) in etape.potentiels?.u" :key="`u${i}`"
-              class="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700
-                rounded-lg px-3 py-1.5 text-xs font-mono">
-              <span class="text-gray-400">u<sub>{{ i+1 }}</sub> =</span>
-              <span class="text-indigo-600 dark:text-indigo-300 ml-1 font-bold">{{ val?.toFixed(0) ?? '—' }}</span>
+          <div class="flex flex-wrap gap-1.5">
+            <span
+              v-for="(val, i) in etape.potentiels?.u"
+              :key="`u${i}`"
+              class="rounded-lg px-2 py-1 text-[11px] font-mono"
+              :class="isDark ? 'bg-indigo-900/30' : 'bg-indigo-50'"
+            >
+              <span class="text-gray-400"
+                >u<sub>{{ i + 1 }}</sub
+                >=</span
+              >
+              <span class="text-indigo-600 dark:text-indigo-300 font-bold">{{
+                val?.toFixed(0) ?? "—"
+              }}</span>
             </span>
           </div>
-          <div class="flex flex-wrap gap-2">
-            <span v-for="(val, j) in etape.potentiels?.v" :key="`v${j}`"
-              class="bg-teal-50 dark:bg-teal-900/30 border border-teal-200 dark:border-teal-700
-                rounded-lg px-3 py-1.5 text-xs font-mono">
-              <span class="text-gray-400">v<sub>{{ j+1 }}</sub> =</span>
-              <span class="text-teal-600 dark:text-teal-300 ml-1 font-bold">{{ val?.toFixed(0) ?? '—' }}</span>
+          <div class="flex flex-wrap gap-1.5">
+            <span
+              v-for="(val, j) in etape.potentiels?.v"
+              :key="`v${j}`"
+              class="rounded-lg px-2 py-1 text-[11px] font-mono"
+              :class="isDark ? 'bg-teal-900/30' : 'bg-teal-50'"
+            >
+              <span class="text-gray-400"
+                >v<sub>{{ j + 1 }}</sub
+                >=</span
+              >
+              <span class="text-teal-600 dark:text-teal-300 font-bold">{{
+                val?.toFixed(0) ?? "—"
+              }}</span>
             </span>
           </div>
-          <p class="text-xs text-gray-400 italic">
-            v<sub>j</sub> = u<sub>i</sub> + c<sub>ij</sub> pour chaque case de base
+          <p
+            class="text-[11px] italic"
+            :class="isDark ? 'text-gray-500' : 'text-gray-400'"
+          >
+            v<sub>j</sub> = u<sub>i</sub> + c<sub>ij</sub> pour chaque case de
+            base
           </p>
         </div>
       </Transition>
     </div>
 
-    <!-- ── Tableau des indices + gains ───────────────────────────────────── -->
-    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-stone-200 dark:border-gray-800 p-5 shadow-sm">
-      <button @click="showIndices = !showIndices"
-        class="w-full flex items-center justify-between text-left mb-1">
-        <h4 class="text-xs font-semibold tracking-widest uppercase text-gray-400 dark:text-gray-500">
-          Indices marginaux &amp; Gains
+    <!-- ── Indices marginaux + Gains : cartes empilées au lieu d'un tableau 12-colonnes ── -->
+    <div
+      class="rounded-2xl border p-4 shadow-sm"
+      :class="
+        isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-stone-200'
+      "
+    >
+      <button
+        @click="showIndices = !showIndices"
+        class="w-full flex items-center justify-between text-left"
+      >
+        <h4
+          class="text-[11px] font-semibold tracking-widest uppercase"
+          :class="isDark ? 'text-gray-500' : 'text-gray-400'"
+        >
+          Indices &amp; Gains
         </h4>
-        <svg class="w-4 h-4 text-gray-400 transition-transform" :class="showIndices ? 'rotate-180':''"
-          fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        <svg
+          class="w-3.5 h-3.5 transition-transform shrink-0"
+          :class="[
+            isDark ? 'text-gray-400' : 'text-gray-400',
+            showIndices ? 'rotate-180' : '',
+          ]"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 9l-7 7-7-7"
+          />
         </svg>
       </button>
-      <!-- Formules rappel -->
-      <div class="flex flex-wrap gap-3 text-xs text-gray-400 mb-3">
-        <span>ρ<sub>ij</sub> = u<sub>i</sub> + c<sub>ij</sub> − v<sub>j</sub></span>
-        <span class="text-gray-300 dark:text-gray-600">·</span>
-        <span class="text-violet-500 dark:text-violet-400 font-semibold">
-          Gain = ρ<sub>ij</sub> × θ → pivot sur le gain maximal
-        </span>
-      </div>
+
+      <p
+        class="text-[10px] mt-1.5"
+        :class="isDark ? 'text-gray-500' : 'text-gray-400'"
+      >
+        ρ<sub>ij</sub> = u<sub>i</sub> + c<sub>ij</sub> − v<sub>j</sub> · gain =
+        ρ × θ
+      </p>
 
       <Transition name="collapse">
-        <div v-if="showIndices" class="space-y-2">
-
-          <!-- En-têtes colonnes -->
-          <div class="grid grid-cols-12 gap-1 px-2 mb-1">
-            <span class="col-span-3 text-[10px] text-gray-400 uppercase tracking-wider">Case</span>
-            <span class="col-span-3 text-[10px] text-gray-400 uppercase tracking-wider hidden sm:block">Formule ρ</span>
-            <span class="col-span-2 text-[10px] text-gray-400 uppercase tracking-wider text-right">ρ</span>
-            <span class="col-span-2 text-[10px] text-gray-400 uppercase tracking-wider text-right">θ</span>
-            <span class="col-span-2 text-[10px] text-gray-400 uppercase tracking-wider text-right">Gain</span>
-          </div>
-
-          <div v-for="d in etape.details_indices" :key="`${d.i}-${d.j}`"
-            :class="d.est_meilleur
-              ? 'border-violet-400 dark:border-violet-500 bg-violet-50 dark:bg-violet-900/30 shadow-md ring-1 ring-violet-300 dark:ring-violet-700'
-              : d.gain > 0
-                ? 'border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20'
-                : 'border-stone-100 dark:border-gray-800 bg-stone-50 dark:bg-gray-800/40'"
-            class="rounded-xl border px-3 py-2 grid grid-cols-12 gap-1 items-center transition-all">
-
-            <!-- Case + badge PIVOT -->
-            <div class="col-span-3 flex items-center gap-1.5 min-w-0">
-              <span v-if="d.est_meilleur"
-                class="text-[9px] font-bold bg-violet-500 text-white px-1.5 py-0.5 rounded shrink-0">
-                PIVOT
-              </span>
-              <span class="text-xs font-semibold text-gray-700 dark:text-gray-200 truncate">
-                ρ(U{{ d.i+1 }},C{{ d.j+1 }})
+        <div v-if="showIndices" class="mt-3 space-y-1.5">
+          <div
+            v-for="d in etape.details_indices"
+            :key="`d-${d.i}-${d.j}`"
+            :class="
+              d.est_meilleur
+                ? isDark
+                  ? 'border-violet-500 bg-violet-900/30'
+                  : 'border-violet-400 bg-violet-50'
+                : d.gain < -1e-9
+                  ? isDark
+                    ? 'border-amber-800 bg-amber-900/20'
+                    : 'border-amber-200 bg-amber-50'
+                  : isDark
+                    ? 'border-gray-800 bg-gray-800/40'
+                    : 'border-stone-100 bg-stone-50'
+            "
+            class="rounded-xl border px-3 py-2"
+          >
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <div class="flex items-center gap-1.5 min-w-0">
+                <span
+                  v-if="d.est_meilleur"
+                  class="text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0 bg-violet-500 text-white"
+                >
+                  PIVOT
+                </span>
+                <span
+                  class="text-xs font-semibold truncate"
+                  :class="isDark ? 'text-gray-200' : 'text-gray-700'"
+                >
+                  U{{ d.i + 1 }} → C{{ d.j + 1 }}
+                </span>
+              </div>
+              <span
+                class="text-sm font-bold font-mono tabular-nums shrink-0"
+                :class="isDark ? 'text-violet-300' : 'text-violet-600'"
+              >
+                ρ {{ d.indice >= 0 ? "+" : "" }}{{ d.indice.toFixed(2) }}
               </span>
             </div>
-
-            <!-- Formule -->
-            <span class="col-span-3 text-xs font-mono text-gray-400 dark:text-gray-500 hidden sm:block truncate">
-              {{ d.formule }}
-            </span>
-
-            <!-- Valeur ρ -->
-            <span class="col-span-2 text-sm font-bold font-mono text-right"
-              :class="d.est_meilleur
-                ? 'text-violet-600 dark:text-violet-300'
-                : d.indice < 0 ? 'text-amber-600 dark:text-amber-300'
-                : 'text-emerald-600 dark:text-emerald-400'">
-              {{ d.indice >= 0 ? '+' : '' }}{{ d.indice.toFixed(2) }}
-            </span>
-
-            <!-- Theta -->
-            <span class="col-span-2 text-xs font-mono text-right"
-              :class="d.gain < -1e-9 ? 'text-gray-600 dark:text-gray-300' : 'text-gray-300 dark:text-gray-600'">
-              {{ d.theta > 0 ? d.theta.toFixed(1) : '—' }}
-            </span>
-
-            <!-- Gain = |ρ| × θ -->
-            <span class="col-span-2 text-sm font-bold font-mono text-right"
-              :class="d.est_meilleur
-                ? 'text-violet-600 dark:text-violet-300'
-                : d.gain < -1e-9 ? 'text-amber-600 dark:text-amber-400'
-                : 'text-gray-300 dark:text-gray-600'">
-              {{ d.gain < -1e-9 ? d.gain.toFixed(2) : '—' }}
-            </span>
+            <div
+              class="flex items-center justify-between text-[11px]"
+              :class="isDark ? 'text-gray-500' : 'text-gray-400'"
+            >
+              <span class="font-mono truncate">{{ d.formule }}</span>
+              <span class="font-mono tabular-nums shrink-0 ml-2">
+                θ={{ d.theta > 0 ? d.theta.toFixed(1) : "—" }} · gain={{
+                  d.gain < -1e-9 ? d.gain.toFixed(2) : "—"
+                }}
+              </span>
+            </div>
           </div>
 
-          <!-- Légende -->
-          <div class="flex flex-wrap gap-3 pt-2 text-xs text-gray-400">
-            <span class="flex items-center gap-1.5">
-              <span class="w-3 h-3 rounded bg-violet-200 dark:bg-violet-800 inline-block"></span>
-              Pivot (gain minimale)
+          <!-- Légende compacte -->
+          <div
+            class="flex flex-wrap gap-x-3 gap-y-1 pt-2 text-[10px]"
+            :class="isDark ? 'text-gray-500' : 'text-gray-400'"
+          >
+            <span class="flex items-center gap-1">
+              <span
+                class="w-2.5 h-2.5 rounded inline-block"
+                :class="isDark ? 'bg-violet-800' : 'bg-violet-200'"
+              ></span
+              >Pivot
             </span>
-            <span class="flex items-center gap-1.5">
-              <span class="w-3 h-3 rounded bg-amber-100 dark:bg-amber-900/40 border border-amber-200 inline-block"></span>
-              Gain negatif (amélioration possible)
+            <span class="flex items-center gap-1">
+              <span
+                class="w-2.5 h-2.5 rounded inline-block"
+                :class="isDark ? 'bg-amber-900/40' : 'bg-amber-100'"
+              ></span
+              >Amélioration
             </span>
-            <span class="flex items-center gap-1.5">
-              <span class="w-3 h-3 rounded bg-stone-100 dark:bg-gray-800 border border-stone-200 inline-block"></span>
-              ρ ≥ 0 (pas de gain)
+            <span class="flex items-center gap-1">
+              <span
+                class="w-2.5 h-2.5 rounded inline-block"
+                :class="isDark ? 'bg-gray-800' : 'bg-stone-100'"
+              ></span
+              >ρ ≥ 0
             </span>
           </div>
         </div>
@@ -193,100 +330,169 @@
     </div>
 
     <!-- ── Cycle & Theta & Gain du pivot ─────────────────────────────────── -->
-    <div v-if="!etape.optimal"
-      class="bg-white dark:bg-gray-900 rounded-2xl border border-stone-200 dark:border-gray-800 p-5 shadow-sm">
-      <h4 class="text-xs font-semibold tracking-widest uppercase text-gray-400 dark:text-gray-500 mb-4">
+    <div
+      v-if="!etape.optimal"
+      class="rounded-2xl border p-4 shadow-sm"
+      :class="
+        isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-stone-200'
+      "
+    >
+      <h4
+        class="text-[11px] font-semibold tracking-widest uppercase mb-3"
+        :class="isDark ? 'text-gray-500' : 'text-gray-400'"
+      >
         Cycle Stepping Stone
       </h4>
 
       <!-- Cycle visuel -->
-      <div class="bg-stone-50 dark:bg-gray-800/60 rounded-xl p-3 mb-4 overflow-x-auto">
-        <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-2">Chemin du pivot :</p>
+      <div
+        class="rounded-xl p-2.5 mb-3 overflow-x-auto"
+        :class="isDark ? 'bg-gray-800/60' : 'bg-stone-50'"
+      >
         <div class="flex items-center gap-1 flex-wrap">
-          <span v-for="(node, idx) in etape.cycle" :key="idx" class="flex items-center gap-1">
-            <span :class="idx % 2 === 0
-                ? 'bg-violet-100 dark:bg-violet-900/50 border-violet-300 dark:border-violet-600 text-violet-700 dark:text-violet-200'
-                : 'bg-rose-100 dark:bg-rose-900/50 border-rose-300 dark:border-rose-600 text-rose-700 dark:text-rose-200'"
-              class="border rounded-lg px-2.5 py-1 text-xs font-mono font-bold inline-flex items-center gap-1 shrink-0">
-              {{ idx % 2 === 0 ? '+' : '-' }} [{{ node[0]+1 }},{{ node[1]+1 }}]
+          <template v-for="(node, idx) in etape.cycle" :key="idx">
+            <span
+              class="border rounded-lg px-2 py-0.5 text-[11px] font-mono font-bold inline-flex items-center gap-1 shrink-0"
+              :class="
+                idx % 2 === 0
+                  ? isDark
+                    ? 'border-violet-600 bg-violet-900/50 text-violet-200'
+                    : 'border-violet-300 bg-violet-100 text-violet-700'
+                  : isDark
+                    ? 'border-rose-600 bg-rose-900/50 text-rose-200'
+                    : 'border-rose-300 bg-rose-100 text-rose-700'
+              "
+            >
+              {{ idx % 2 === 0 ? "+" : "−" }}[{{ node[0] + 1 }},{{
+                node[1] + 1
+              }}]
             </span>
-            <svg v-if="idx < etape.cycle.length - 1"
-              class="w-3 h-3 text-gray-300 dark:text-gray-600 shrink-0"
-              fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            <svg
+              v-if="idx < etape.cycle.length - 1"
+              class="w-2.5 h-2.5 shrink-0"
+              :class="isDark ? 'text-gray-600' : 'text-gray-300'"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
             </svg>
-          </span>
+          </template>
         </div>
       </div>
 
-      <!-- Grille θ / case sortante / gain pivot -->
-      <div class="grid grid-cols-3 gap-3 mb-4">
-        <div class="bg-stone-50 dark:bg-gray-800/60 rounded-xl p-3">
-          <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">θ</p>
-          <p class="text-xl font-bold font-mono text-violet-600 dark:text-violet-300">
+      <!-- θ / case sortante / gain, empilés (au lieu d'un grid-cols-3 trop serré) -->
+      <div class="grid grid-cols-3 gap-2 mb-3">
+        <div
+          class="rounded-xl p-2.5 text-center"
+          :class="isDark ? 'bg-gray-800/60' : 'bg-stone-50'"
+        >
+          <p
+            class="text-[9px] uppercase tracking-wider mb-1"
+            :class="isDark ? 'text-gray-400' : 'text-gray-400'"
+          >
+            θ
+          </p>
+          <p
+            class="text-base font-bold font-mono tabular-nums"
+            :class="isDark ? 'text-violet-300' : 'text-violet-600'"
+          >
             {{ etape.theta?.toFixed(2) }}
           </p>
-          <p class="text-[10px] text-gray-400 mt-1">min des cases -</p>
         </div>
-        <div class="bg-stone-50 dark:bg-gray-800/60 rounded-xl p-3">
-          <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Case sortante</p>
-          <p class="text-xl font-bold font-mono text-rose-500 dark:text-rose-400" v-if="etape.case_sortante">
-            [{{ etape.case_sortante[0]+1 }},{{ etape.case_sortante[1]+1 }}]
+        <div
+          class="rounded-xl p-2.5 text-center"
+          :class="isDark ? 'bg-gray-800/60' : 'bg-stone-50'"
+        >
+          <p
+            class="text-[9px] uppercase tracking-wider mb-1"
+            :class="isDark ? 'text-gray-400' : 'text-gray-400'"
+          >
+            Sortante
           </p>
-          <p class="text-[10px] text-gray-400 mt-1">flux → 0</p>
+          <p
+            v-if="etape.case_sortante"
+            class="text-sm font-bold font-mono"
+            :class="isDark ? 'text-rose-400' : 'text-rose-500'"
+          >
+            [{{ etape.case_sortante[0] + 1 }},{{ etape.case_sortante[1] + 1 }}]
+          </p>
         </div>
-        <div class="bg-violet-50 dark:bg-violet-900/30 border border-violet-200 dark:border-violet-700 rounded-xl p-3">
-          <p class="text-[10px] text-violet-500 uppercase tracking-wider mb-1">Gain réel</p>
-          <p class="text-xl font-bold font-mono text-violet-600 dark:text-violet-300">
-            {{ etape.meilleur_indice?.gain?.toFixed(2) ?? '—' }}
+        <div
+          class="rounded-xl p-2.5 text-center"
+          :class="isDark ? 'bg-violet-900/30' : 'bg-violet-50'"
+        >
+          <p
+            class="text-[9px] uppercase tracking-wider mb-1"
+            :class="isDark ? 'text-violet-500' : 'text-violet-500'"
+          >
+            Gain
           </p>
-          <p class="text-[10px] text-violet-400 mt-1">
-            {{ etape.meilleur_indice?.formule_gain ?? '' }}
+          <p
+            class="text-base font-bold font-mono tabular-nums"
+            :class="isDark ? 'text-violet-300' : 'text-violet-600'"
+          >
+            {{ etape.meilleur_indice?.gain?.toFixed(2) ?? "—" }}
           </p>
         </div>
       </div>
 
-      <!-- Récap case entrante -->
-      <div v-if="etape.meilleur_indice"
-        class="bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-700 rounded-xl p-3">
-        <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Case entrante (pivot)</p>
-        <p class="text-sm font-mono flex flex-wrap gap-1 items-center">
-          <span class="text-gray-700 dark:text-gray-200 font-semibold">
-            ρ(U{{ etape.meilleur_indice.i+1 }},C{{ etape.meilleur_indice.j+1 }})
-          </span>
-          <span class="text-gray-400">=</span>
-          <span class="text-gray-500 dark:text-gray-400">{{ etape.meilleur_indice.formule }}</span>
-          <span class="text-gray-400">=</span>
-          <span class="font-bold text-violet-600 dark:text-violet-300">
-            {{ etape.meilleur_indice.valeur?.toFixed(2) }}
-          </span>
-          <span class="text-gray-400 mx-1">→</span>
-          <span class="text-gray-500 dark:text-gray-400">
-            Gain = {{ etape.meilleur_indice.valeur?.toFixed(2) }} × {{ etape.theta?.toFixed(2) }}
-          </span>
-          <span class="text-gray-400">=</span>
-          <span class="font-bold text-violet-600 dark:text-violet-300">
-            {{ etape.meilleur_indice.gain?.toFixed(2) }}
-          </span>
+      <!-- Récap case entrante : formule condensée sur 2 lignes -->
+      <div
+        v-if="etape.meilleur_indice"
+        class="rounded-xl p-3 text-xs font-mono leading-relaxed"
+        :class="isDark ? 'bg-violet-900/20' : 'bg-violet-50'"
+      >
+        <p :class="isDark ? 'text-gray-300' : 'text-gray-700'">
+          ρ(U{{ etape.meilleur_indice.i + 1 }},C{{
+            etape.meilleur_indice.j + 1
+          }}) = {{ etape.meilleur_indice.formule }} =
+          <span
+            class="font-bold"
+            :class="isDark ? 'text-violet-300' : 'text-violet-600'"
+            >{{ etape.meilleur_indice.valeur?.toFixed(2) }}</span
+          >
+        </p>
+        <p class="mt-1" :class="isDark ? 'text-gray-400' : 'text-gray-500'">
+          Gain = {{ etape.meilleur_indice.valeur?.toFixed(2) }} ×
+          {{ etape.theta?.toFixed(2) }} =
+          <span
+            class="font-bold"
+            :class="isDark ? 'text-violet-300' : 'text-violet-600'"
+            >{{ etape.meilleur_indice.gain?.toFixed(2) }}</span
+          >
         </p>
       </div>
     </div>
-
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-defineProps({ etape: Object })
-const showPotentiels = ref(true)
-const showIndices    = ref(true)
+import { ref } from "vue";
+const props = defineProps({ etape: Object, isDark: Boolean });
+const showPotentiels = ref(true);
+const showIndices = ref(true);
 </script>
 
 <style scoped>
-.collapse-enter-active, .collapse-leave-active {
+.collapse-enter-active,
+.collapse-leave-active {
   transition: all 0.3s ease;
   overflow: hidden;
 }
-.collapse-enter-from, .collapse-leave-to { opacity: 0; max-height: 0; }
-.collapse-enter-to, .collapse-leave-from { opacity: 1; max-height: 800px; }
+.collapse-enter-from,
+.collapse-leave-to {
+  opacity: 0;
+  max-height: 0;
+}
+.collapse-enter-to,
+.collapse-leave-from {
+  opacity: 1;
+  max-height: 800px;
+}
 </style>
