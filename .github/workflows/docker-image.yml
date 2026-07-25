@@ -1,17 +1,13 @@
 name: CI/CD Pipeline - Projet RO (FastAPI + Vue.js)
 
-# Déclenchement du pipeline lors d'un push ou d'une PR sur la branche principale
 on:
   push:
-    branches: ["main", "master"]
+    branches: [ "main", "master" ]
   pull_request:
-    branches: ["main", "master"]
+    branches: [ "main", "master" ]
 
-# Définition des variables globales
 env:
   REGISTRY: ghcr.io
-  BACKEND_IMAGE_NAME: ${{ github.repository }}/backend
-  FRONTEND_IMAGE_NAME: ${{ github.repository }}/frontend
 
 jobs:
   # ====================================================
@@ -28,16 +24,14 @@ jobs:
       - name: Configuration de Python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
       - name: Installation des dépendances et validation du code
         run: |
           cd backend
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          # Vérification de la syntaxe de tous les fichiers Python (graphe, stepping, main, etc.)
           python -m py_compile main.py graphe.py stepping.py initialisation.py initialisation_minli.py
-          # Exécution des tests unitaires Pytest s'il existe un dossier 'tests'
           if [ -d "tests" ]; then pytest; fi
 
   # ====================================================
@@ -45,7 +39,7 @@ jobs:
   # ====================================================
   build-and-push:
     name: Continuous Delivery - Build & Push Docker
-    needs: test-backend # Attend le succès des tests backend avant de se lancer
+    needs: test-backend
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -54,6 +48,11 @@ jobs:
     steps:
       - name: Récupération du code source
         uses: actions/checkout@v4
+
+      # Convertit le nom du dépôt GitHub en minuscules pour Docker/GHCR
+      - name: Formatage du nom du dépôt en minuscules
+        run: |
+          echo "REPO_LOWER=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
       - name: Configuration de Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -65,7 +64,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Build & Push de l'image Backend (FastAPI)
+      # Build & Push de l'image Backend
       - name: Build and Push - Backend Docker Image
         uses: docker/build-push-action@v5
         with:
@@ -73,10 +72,10 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:latest
-            ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}/backend:latest
+            ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}/backend:${{ github.sha }}
 
-      # Build & Push de l'image Frontend (Vue.js + Tailwind + Nginx)
+      # Build & Push de l'image Frontend
       - name: Build and Push - Frontend Docker Image
         uses: docker/build-push-action@v5
         with:
@@ -84,5 +83,5 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:latest
-            ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}/frontend:latest
+            ${{ env.REGISTRY }}/${{ env.REPO_LOWER }}/frontend:${{ github.sha }}
