@@ -480,18 +480,19 @@ const erreursCellules = reactive({});
 
 function backgroundColor(n) {
   if (n === 1) {
-    return this.isDark ? "bg-stone-50" : "bg-gray-800";
+    return props.isDark ? "bg-stone-50" : "bg-gray-800";
   }
 }
+
 function buttonClass() {
-  if (estValide) {
+  if (estValide.value) {
     return "bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:-translate-y-0.5";
   }
-  if (!estValide) {
-    if (this.isDark) return "bg-gray-700 text-gray-400 cursor-not-allowed";
-    else return "bg-stone-300 text-stone-500 cursor-not-allowed";
-  }
+  return props.isDark
+    ? "bg-gray-700 text-gray-400 cursor-not-allowed"
+    : "bg-stone-300 text-stone-500 cursor-not-allowed";
 }
+
 function changerDim(type, delta) {
   if (type === "lignes") {
     const n = Math.max(2, Math.min(6, nbLignes.value + delta));
@@ -516,7 +517,7 @@ function changerDim(type, delta) {
       demandes.value.pop();
     }
   }
-  // Nettoyage des erreurs de cellules devenues obsolètes après un changement de dimensions
+  // Nettoyage des erreurs de cellules devenues obsolètes
   Object.keys(erreursCellules).forEach((k) => {
     const [i, j] = k.split("-").map(Number);
     if (i >= nbLignes.value || j >= nbColonnes.value) delete erreursCellules[k];

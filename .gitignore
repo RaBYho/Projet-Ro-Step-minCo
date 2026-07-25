@@ -1,6 +1,7 @@
 # --- Python (Back-end) ---
 # Environnements virtuels
 venv/
+.venv/
 env/
 .env/
 # Fichiers compilés
