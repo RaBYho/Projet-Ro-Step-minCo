@@ -211,12 +211,14 @@
 </template>
 
 <script setup>
-// Le script reste inchangé, je le laisse pour continuité
 import { onMounted, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import FormulaireTransport from "./components/FormulaireTransport.vue";
 import AffichageEtapes from "./components/AffichageEtapes.vue";
 import LoaderAnimation from "./components/LoaderAnimation.vue";
+
+// 1. URL dynamique de l'API (Render en prod, Localhost en dev)
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 const isDark = ref(false);
 const phase = ref("formulaire");
@@ -244,11 +246,14 @@ async function lancerResolution(donnees) {
   try {
     await new Promise((r) => setTimeout(r, 300));
     messageChargement.value = "Calcul de la solution initiale...";
-    const response = await fetch("http://localhost:8000/resoudre", {
+
+    // 2. Utilisation de la variable API_URL
+    const response = await fetch(`${API_URL}/resoudre`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(donnees),
     });
+
     if (!response.ok) {
       const txt = await response.text();
       throw new Error(`Erreur HTTP ${response.status} : ${txt}`);
@@ -275,7 +280,7 @@ async function lancerResolution(donnees) {
     ) {
       afficherErreur(
         "Serveur inaccessible",
-        "Vérifiez que FastAPI tourne sur http://localhost:8000 avec : uvicorn main:app --reload",
+        `Impossible de contacter l'API sur ${API_URL}. Vérifiez que le backend tourne.`,
       );
     } else {
       afficherErreur("Erreur", e.message);
@@ -303,60 +308,3 @@ watch(isDark, (newValue) => {
   localStorage.setItem("dark-mode", String(newValue));
 });
 </script>
-
-<style>
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-html {
-  font-family: "Outfit", sans-serif;
-}
-.font-mono {
-  font-family: "JetBrains Mono", monospace;
-}
-
-.page-enter-active,
-.page-leave-active {
-  transition: all 0.3s ease;
-}
-.page-enter-from {
-  opacity: 0;
-  transform: translateY(12px);
-}
-.page-leave-to {
-  opacity: 0;
-  transform: translateY(-8px);
-}
-
-.toast-enter-active,
-.toast-leave-active {
-  transition: all 0.3s ease;
-}
-.toast-enter-from {
-  opacity: 0;
-  transform: translate(-50%, -12px);
-}
-.toast-leave-to {
-  opacity: 0;
-  transform: translate(-50%, -12px);
-}
-
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 4px;
-  height: 2px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #c7d2fe;
-  border-radius: 4px;
-}
-.dark ::-webkit-scrollbar-thumb {
-  background: #4338ca;
-}
-</style>

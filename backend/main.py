@@ -27,6 +27,9 @@ def convertir_numpy(obj):
     if isinstance(obj, dict):        return {k: convertir_numpy(v) for k, v in obj.items()}
     return obj
 
+@app.get("/")
+def health_check():
+    return {"status": "online", "message": "API de Recherche Opérationnelle fonctionnelle"}
 
 @app.post("/resoudre")
 def resoudre_complet(data: DonneesTransport):
