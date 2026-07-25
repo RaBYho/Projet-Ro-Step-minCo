@@ -108,9 +108,8 @@
                         'focus:ring-2 focus:ring-indigo-500',
                         'transition-colors duration-150',
                         erreursCellules[`${i - 1}-${j - 1}`]
-                          ? 'ring-2 ring-red-40'
+                          ? 'ring-2 ring-red-400'
                           : '',
-                        backgroundColor(1),
                         isDark
                           ? 'bg-gray-800 focus:bg-gray-800'
                           : 'bg-stone-50 focus:bg-white',
@@ -129,13 +128,14 @@
                         'border-0',
                         'focus:ring-2 focus:ring-violet-500',
                         'transition-colors duration-150',
-                        erreurs.offres ? 'ring-2 ring-red-400' : '',
+                        erreursOffres[i - 1] ? 'ring-2 ring-red-400' : '',
                         isDark
                           ? 'text-violet-300 placeholder-violet-600/50 bg-violet-900/20 focus:bg-violet-900/30'
                           : 'text-violet-700 placeholder-violet-300 bg-violet-50 focus:bg-white',
                       ]"
                       placeholder="0"
                       min="0"
+                      @blur="validerOffre(i - 1)"
                     />
                   </td>
                 </tr>
@@ -164,13 +164,14 @@
                         'border-0',
                         'focus:ring-2 focus:ring-teal-500 ',
                         'transition-colors duration-150',
-                        erreurs.demandes ? 'ring-2 ring-red-400' : '',
+                        erreursDemandes[j - 1] ? 'ring-2 ring-red-400' : '',
                         isDark
                           ? 'text-teal-300 placeholder-teal-600/50 bg-teal-900/20 focus:bg-teal-900/30'
                           : 'text-teal-700 placeholder-teal-300 bg-teal-50 focus:bg-white',
                       ]"
                       placeholder="0"
                       min="0"
+                      @blur="validerDemande(j - 1)"
                     />
                   </td>
                   <td class="p-2 text-center">
@@ -192,28 +193,6 @@
                 </tr>
               </tbody>
             </table>
-          </div>
-
-          <!-- Erreur coûts -->
-          <div
-            v-if="erreurs.couts"
-            class="mt-4 flex items-center gap-2 text-xs rounded-lg p-3"
-            :class="
-              isDark ? 'text-red-400 bg-red-900/20' : 'text-red-600 bg-red-50'
-            "
-          >
-            <svg
-              class="w-4 h-4 shrink-0"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            {{ erreurs.couts }}
           </div>
 
           <!-- Exemples : sous le tableau, même carte -->
@@ -270,7 +249,7 @@
                 Offre totale
               </p>
               <p
-                class="text-2xl font-bold font-mono tabular-nums text-violet-600 dark:text-violet-400"
+                class="text-2xl font-bold font-mono tabular-nums"
                 :class="isDark ? 'text-violet-400' : 'text-violet-600'"
               >
                 {{ totalOffre }}
@@ -284,7 +263,7 @@
                 Demande totale
               </p>
               <p
-                class="text-2xl font-bold font-mono tabular-nums text-teal-600 dark:text-teal-400"
+                class="text-2xl font-bold font-mono tabular-nums"
                 :class="isDark ? 'text-teal-400' : 'text-teal-600'"
               >
                 {{ totalDemande }}
@@ -475,14 +454,10 @@ const couts = ref([
 const offres = ref([100, 200]);
 const demandes = ref([80, 120, 100]);
 
-const erreurs = reactive({ couts: "", offres: false, demandes: false });
+// Erreurs de validation par cellule (couts) et par index (offres/demandes)
 const erreursCellules = reactive({});
-
-function backgroundColor(n) {
-  if (n === 1) {
-    return props.isDark ? "bg-stone-50" : "bg-gray-800";
-  }
-}
+const erreursOffres = reactive({});
+const erreursDemandes = reactive({});
 
 function buttonClass() {
   if (estValide.value) {
@@ -517,10 +492,16 @@ function changerDim(type, delta) {
       demandes.value.pop();
     }
   }
-  // Nettoyage des erreurs de cellules devenues obsolètes
+  // Nettoyage des erreurs devenues obsolètes après redimensionnement
   Object.keys(erreursCellules).forEach((k) => {
     const [i, j] = k.split("-").map(Number);
     if (i >= nbLignes.value || j >= nbColonnes.value) delete erreursCellules[k];
+  });
+  Object.keys(erreursOffres).forEach((k) => {
+    if (Number(k) >= nbLignes.value) delete erreursOffres[k];
+  });
+  Object.keys(erreursDemandes).forEach((k) => {
+    if (Number(k) >= nbColonnes.value) delete erreursDemandes[k];
   });
 }
 
@@ -545,6 +526,16 @@ const estValide = computed(() => estEquilibre.value && coutsValides.value);
 function validerCellule(i, j) {
   const v = couts.value[i][j];
   erreursCellules[`${i}-${j}`] = v === null || v === "" || +v < 0;
+}
+
+function validerOffre(i) {
+  const v = offres.value[i];
+  erreursOffres[i] = v === null || v === "" || +v < 0;
+}
+
+function validerDemande(j) {
+  const v = demandes.value[j];
+  erreursDemandes[j] = v === null || v === "" || +v < 0;
 }
 
 const exemples = [
@@ -640,6 +631,8 @@ function chargerExemple(ex) {
   offres.value = [...ex.offres];
   demandes.value = [...ex.demandes];
   Object.keys(erreursCellules).forEach((k) => delete erreursCellules[k]);
+  Object.keys(erreursOffres).forEach((k) => delete erreursOffres[k]);
+  Object.keys(erreursDemandes).forEach((k) => delete erreursDemandes[k]);
 }
 
 function soumettre() {
