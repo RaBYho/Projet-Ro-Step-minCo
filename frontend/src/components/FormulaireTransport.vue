@@ -250,30 +250,42 @@
       <div class="flex flex-col gap-5 min-h-0">
         <!-- Carte Balance -->
         <div
-          class="rounded-2xl p-5 bg-white dark:bg-gray-900 ring-1 ring-stone-200/60 dark:ring-gray-800 shadow-sm shrink-0"
+          class="rounded-2xl p-5 shadow-sm shrink-0"
+          :class="
+            isDark ? 'bg-gray-900 ring-gray-800' : 'bg-white ring-stone-200/60'
+          "
         >
           <h3
-            class="text-xs font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider mb-3"
+            class="text-xs font-semibold uppercase tracking-wider mb-3"
+            :class="isDark ? 'text-stone-400' : 'text-stone-500'"
           >
             Équilibre
           </h3>
           <div class="flex items-center justify-between gap-4">
             <div class="flex-1 text-center">
-              <p class="text-xs text-stone-500 dark:text-stone-400">
+              <p
+                class="text-xs"
+                :class="isDark ? 'text-stone-400' : 'text-stone-500'"
+              >
                 Offre totale
               </p>
               <p
                 class="text-2xl font-bold font-mono tabular-nums text-violet-600 dark:text-violet-400"
+                :class="isDark ? 'text-violet-400' : 'text-violet-600'"
               >
                 {{ totalOffre }}
               </p>
             </div>
             <div class="flex-1 text-center">
-              <p class="text-xs text-stone-500 dark:text-stone-400">
+              <p
+                class="text-xs"
+                :class="isDark ? 'text-stone-400' : 'text-stone-500'"
+              >
                 Demande totale
               </p>
               <p
                 class="text-2xl font-bold font-mono tabular-nums text-teal-600 dark:text-teal-400"
+                :class="isDark ? 'text-teal-400' : 'text-teal-600'"
               >
                 {{ totalDemande }}
               </p>
@@ -306,10 +318,14 @@
         <!-- Carte Répartition : comble l'espace avec un vrai contenu utile,
        et grandit naturellement avec le nombre de sources/destinations -->
         <div
-          class="rounded-2xl p-5 bg-white dark:bg-gray-900 ring-1 ring-stone-200/60 dark:ring-gray-800 shadow-sm flex-1 min-h-0 overflow-y-auto"
+          class="rounded-2xl p-5 shadow-sm flex-1 min-h-0 overflow-y-auto"
+          :class="
+            isDark ? 'bg-gray-900 ring-gray-800' : 'bg-white ring-stone-200/60'
+          "
         >
           <h3
-            class="text-xs font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider mb-3"
+            class="text-xs font-semibold uppercase tracking-wider mb-3"
+            :class="isDark ? 'text-stone-400' : 'text-stone-500'"
           >
             Répartition
           </h3>
@@ -329,7 +345,8 @@
                   class="flex items-center gap-2"
                 >
                   <span
-                    class="text-[11px] w-14 shrink-0 text-stone-500 dark:text-stone-400"
+                    class="text-[11px] w-14 shrink-0"
+                    :class="isDark ? 'text-stone-400' : 'text-stone-500'"
                     >Usine {{ i + 1 }}</span
                   >
                   <div
@@ -337,7 +354,8 @@
                     :class="isDark ? 'bg-gray-800' : 'bg-stone-100'"
                   >
                     <div
-                      class="h-full rounded-full bg-violet-400 dark:bg-violet-500 transition-all duration-300"
+                      class="h-full rounded-full transition-all duration-300"
+                      :class="isDark ? 'bg-violet-500' : 'bg-violet-400'"
                       :style="{
                         width: `${totalOffre > 0 ? (v / totalOffre) * 100 : 0}%`,
                       }"
@@ -367,7 +385,8 @@
                   class="flex items-center gap-2"
                 >
                   <span
-                    class="text-[11px] w-14 shrink-0 text-stone-500 dark:text-stone-400"
+                    class="text-[11px] w-14 shrink-0"
+                    :class="isDark ? 'text-stone-400' : 'text-stone-500'"
                     >Client {{ j + 1 }}</span
                   >
                   <div
@@ -375,7 +394,8 @@
                     :class="isDark ? 'bg-gray-800' : 'bg-stone-100'"
                   >
                     <div
-                      class="h-full rounded-full bg-teal-400 dark:bg-teal-500 transition-all duration-300"
+                      class="h-full rounded-full transition-all duration-300"
+                      :class="isDark ? 'bg-teal-500' : 'bg-teal-400'"
                       :style="{
                         width: `${totalDemande > 0 ? (v / totalDemande) * 100 : 0}%`,
                       }"

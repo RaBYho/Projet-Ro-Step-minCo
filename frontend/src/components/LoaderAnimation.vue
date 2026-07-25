@@ -11,7 +11,7 @@
           r="34"
           fill="none"
           stroke="currentColor"
-          class="text-stone-200 dark:text-gray-800"
+          :class="isDark ? 'text-gray-800' : 'text-stone-200'"
           stroke-width="5"
         />
         <circle
@@ -81,7 +81,8 @@
           </span>
         </div>
         <div
-          class="h-2 rounded-full bg-stone-100 dark:bg-gray-800 overflow-hidden"
+          class="h-2 rounded-full overflow-hidden"
+          :class="isDark ? 'bg-gray-800' : 'bg-stone-300'"
         >
           <div
             class="h-full rounded-full transition-all duration-500 ease-out"
@@ -95,7 +96,10 @@
     </div>
 
     <!-- Message -->
-    <p class="text-sm text-stone-500 dark:text-stone-400 animate-pulse">
+    <p
+      class="text-sm text-stone-500 dark:text-stone-400 animate-pulse"
+      :class="isDark ? 'text-stone-400' : 'text-stone-50'"
+    >
       {{ message }}
     </p>
   </div>

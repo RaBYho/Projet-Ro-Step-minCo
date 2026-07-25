@@ -167,7 +167,7 @@
                 >u<sub>{{ i + 1 }}</sub
                 >=</span
               >
-              <span class="text-indigo-600 dark:text-indigo-300 font-bold">{{
+              <span :class="isDark ? 'text-indigo-300' : 'text-indigo-600'">{{
                 val?.toFixed(0) ?? "—"
               }}</span>
             </span>
@@ -183,7 +183,7 @@
                 >v<sub>{{ j + 1 }}</sub
                 >=</span
               >
-              <span class="text-teal-600 dark:text-teal-300 font-bold">{{
+              <span class="font-bold" :class=" isDark ? 'text-teal-300' : 'text-teal-600' " >{{
                 val?.toFixed(0) ?? "—"
               }}</span>
             </span>

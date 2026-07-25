@@ -3,7 +3,8 @@
     <!-- Barre de progression -->
     <div class="shrink-0 flex items-center gap-5">
       <span
-        class="text-[11px] font-medium uppercase tracking-wider text-stone-400 dark:text-stone-500 whitespace-nowrap"
+        class="text-[11px] font-medium uppercase tracking-wide whitespace-nowrap"
+        :class="isDark ? 'text-stone-500' : 'text-stone-400'"
       >
         Progression
       </span>
@@ -41,7 +42,8 @@
       </div>
 
       <span
-        class="text-[11px] font-mono tabular-nums text-stone-400 dark:text-stone-500 whitespace-nowrap"
+        class="text-[11px] font-mono tabular-nums whitespace-nowrap"
+        :class="isDark ? 'text-stone-500' : 'text-stone-400'"
       >
         {{ etapeIndex < etapes.length ? etapeIndex + 1 : "F" }} /
         {{ etapes.length }}
@@ -85,8 +87,12 @@
               etapeActuelle.type === 'INITIALISATION'
             "
             :key="'init-' + etapeIndex"
-            class="rounded-2xl border p-5 bg-white dark:bg-gray-900 shadow-sm shadow-black/5"
-            :class="isDark ? 'border-gray-800' : 'border-stone-200'"
+            class="rounded-2xl border p-5 shadow-sm shadow-black/5"
+            :class="
+              isDark
+                ? 'border-gray-800 bg-gray-900'
+                : 'border-stone-200 bg-white'
+            "
           >
             <StepEyebrow
               tone="indigo"
@@ -134,7 +140,8 @@
             <div class="space-y-3">
               <div>
                 <p
-                  class="text-[11px] uppercase tracking-wider text-stone-400 dark:text-stone-500 mb-1.5"
+                  class="text-[11px] uppercase tracking-wider mb-1.5"
+                  :class="isDark ? 'text-stone-500' : 'text-stone-400'"
                 >
                   Offres restantes
                 </p>
@@ -154,7 +161,8 @@
               </div>
               <div>
                 <p
-                  class="text-[11px] uppercase tracking-wider text-stone-400 dark:text-stone-500 mb-1.5"
+                  class="text-[11px] uppercase tracking-wider mb-1.5"
+                  :class="isDark ? 'text-stone-500' : 'text-stone-400'"
                 >
                   Demandes restantes
                 </p>
@@ -202,8 +210,12 @@
           <div
             v-else
             key="final"
-            class="rounded-2xl border p-5 bg-white dark:bg-gray-900 shadow-sm shadow-black/5"
-            :class="isDark ? 'border-gray-800' : 'border-stone-200'"
+            class="rounded-2xl border p-5 shadow-sm shadow-black/5"
+            :class="
+              isDark
+                ? 'border-gray-800 bg-gray-900'
+                : 'border-stone-200 bg-white'
+            "
           >
             <StepEyebrow
               tone="emerald"
@@ -273,7 +285,9 @@
                 ? isDark
                   ? 'text-white'
                   : 'text-gray-800'
-                : 'text-gray-500 dark:text-gray-400'
+                : isDark
+                  ? 'text-gray-400'
+                  : 'text-gray-500'
             "
           >
             <svg
@@ -299,7 +313,9 @@
                 ? isDark
                   ? 'text-white'
                   : 'text-gray-800'
-                : 'text-gray-500 dark:text-gray-400'
+                : isDark
+                  ? 'text-gray-400'
+                  : 'text-gray-500'
             "
           >
             <svg
@@ -323,8 +339,10 @@
 
         <!-- Contenu matrice/graphe -->
         <div
-          class="flex-1 rounded-2xl border bg-white dark:bg-gray-900 overflow-hidden shadow-sm shadow-black/5"
-          :class="isDark ? 'border-gray-800' : 'border-stone-200'"
+          class="flex-1 rounded-2xl border overflow-hidden shadow-sm shadow-black/5"
+          :class="
+            isDark ? 'border-gray-800 bg-gray-900' : 'border-stone-200 bg-white'
+          "
         >
           <div class="h-full overflow-auto p-5">
             <Transition name="tab" mode="out-in">
@@ -434,9 +452,11 @@
       </div>
 
       <div class="flex items-center gap-3">
-        <Transition name="fade">
+        <!-- <Transition name="fade">
           <div v-if="lectureAuto" class="flex items-center gap-2">
-            <span class="text-[11px] text-stone-500 dark:text-stone-400"
+            <span
+              class="text-[11px]"
+              :class="isDark ? 'text-stone-500' : 'text-stone-400'"
               >Vitesse</span
             >
             <input
@@ -448,14 +468,16 @@
               class="w-20 accent-indigo-500"
             />
             <span
-              class="text-[11px] font-mono tabular-nums text-stone-500 dark:text-stone-400 w-8"
+              class="text-[11px] font-mono tabular-nums w-8"
+              :class="isDark ? 'text-stone-500' : 'text-stone-400'"
             >
               {{ (vitesse / 1000).toFixed(1) }}s
             </span>
           </div>
-        </Transition>
+        </Transition> -->
         <span
-          class="text-[11px] font-mono tabular-nums text-stone-500 dark:text-stone-400"
+          class="text-[11px] font-mono tabular-nums"
+          :class="isDark ? 'text-stone-500' : 'text-stone-400'"
         >
           {{ etapeIndex + 1 }} / {{ etapes.length + 1 }}
         </span>
